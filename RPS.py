@@ -3,7 +3,7 @@ import sys
 
 pygame.init()
 
-# Configurar pantalla completa
+# Configurar pantalla completa y obtener su resolución actual
 info = pygame.display.Info()
 width, height = info.current_w, info.current_h
 screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
@@ -14,7 +14,7 @@ BLACK = (0, 0, 0)
 # Cargar las imágenes desde la carpeta "images"
 rock_img = pygame.image.load("images/rock.png")
 paper_img = pygame.image.load("images/paper.png")
-scissors_img = pygame.image.load("images/sissors.png")  # Nota: el archivo se llama "sissors.png"
+scissors_img = pygame.image.load("images/sissors.png")  # Asegúrate de que el nombre del archivo sea correcto
 
 # Escalar las imágenes a un tamaño más pequeño (50x50 píxeles)
 rock_img = pygame.transform.scale(rock_img, (50, 50))
@@ -26,7 +26,7 @@ rock = {"name": "rock", "image": rock_img, "pos": [100, 100], "vel": [3, 2]}
 paper = {"name": "paper", "image": paper_img, "pos": [200, 200], "vel": [2, 3]}
 scissors = {"name": "scissors", "image": scissors_img, "pos": [300, 300], "vel": [3, 3]}
 
-# Lista de objetos para facilitar iteraciones
+# Lista de objetos para iterar fácilmente
 objects = [rock, paper, scissors]
 
 clock = pygame.time.Clock()
@@ -36,24 +36,29 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        # Permitir salir presionando ESC
+        # Permitir salir presionando la tecla ESC
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             pygame.quit()
             sys.exit()
 
-    # Actualizar posición y detectar rebotes en los bordes
+    # Obtener el rectángulo de la pantalla (espacio de colisión) en cada iteración
+    screen_rect = screen.get_rect()
+    
+    # Actualizar la posición de cada objeto y comprobar colisiones con los bordes usando screen_rect
     for obj in objects:
         obj["pos"][0] += obj["vel"][0]
         obj["pos"][1] += obj["vel"][1]
         
         img_width = obj["image"].get_width()
         img_height = obj["image"].get_height()
-
-        if obj["pos"][0] < 0 or obj["pos"][0] + img_width > width:
+        
+        # Rebotar en los bordes horizontales
+        if obj["pos"][0] < screen_rect.left or obj["pos"][0] + img_width > screen_rect.right:
             obj["vel"][0] = -obj["vel"][0]
-        if obj["pos"][1] < 0 or obj["pos"][1] + img_height > height:
+        # Rebotar en los bordes verticales
+        if obj["pos"][1] < screen_rect.top or obj["pos"][1] + img_height > screen_rect.bottom:
             obj["vel"][1] = -obj["vel"][1]
-
+    
     # Detección de colisiones y aplicación de las reglas de piedra, papel o tijeras
     for i in range(len(objects)):
         for j in range(i + 1, len(objects)):
@@ -89,4 +94,3 @@ while True:
     
     pygame.display.flip()
     clock.tick(60)
-#comment to make valid the commit
