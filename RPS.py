@@ -4,10 +4,11 @@ import sys
 # Inicializar Pygame
 pygame.init()
 
-# Dimensiones de la ventana
-width, height = 800, 600
-screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Tres imágenes rebotando")
+# Obtener la resolución actual de la pantalla y configurar en pantalla completa
+info = pygame.display.Info()
+width, height = info.current_w, info.current_h
+screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
+pygame.display.set_caption("Tres imágenes rebotando en pantalla completa")
 
 # Color de fondo
 BLACK = (0, 0, 0)
@@ -33,6 +34,10 @@ clock = pygame.time.Clock()
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        # Permitir salir de pantalla completa con la tecla ESC
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             pygame.quit()
             sys.exit()
     
