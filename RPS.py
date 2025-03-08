@@ -1,5 +1,7 @@
 import pygame
 import sys
+import random
+import math
 
 pygame.init()
 
@@ -7,7 +9,7 @@ pygame.init()
 info = pygame.display.Info()
 width, height = info.current_w, info.current_h
 screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
-pygame.display.set_caption("Piedra, Papel o Tijeras en movimiento")
+pygame.display.set_caption("Piedra, Papel o Tijeras (Misma velocidad)")
 
 BLACK = (0, 0, 0)
 
@@ -16,17 +18,50 @@ rock_img = pygame.image.load("images/rock.png")
 paper_img = pygame.image.load("images/paper.png")
 scissors_img = pygame.image.load("images/sissors.png")  # Asegúrate de que el nombre del archivo sea correcto
 
-# Escalar las imágenes a un tamaño más pequeño (50x50 píxeles)
+# Escalar las imágenes a 50x50 píxeles
 rock_img = pygame.transform.scale(rock_img, (50, 50))
 paper_img = pygame.transform.scale(paper_img, (50, 50))
 scissors_img = pygame.transform.scale(scissors_img, (50, 50))
 
-# Configurar cada objeto con su imagen, tipo, posición y velocidad
-rock = {"name": "rock", "image": rock_img, "pos": [100, 100], "vel": [3, 2]}
-paper = {"name": "paper", "image": paper_img, "pos": [200, 200], "vel": [2, 3]}
-scissors = {"name": "scissors", "image": scissors_img, "pos": [300, 300], "vel": [3, 3]}
+def random_velocity_constant(speed=3):
+    """
+    Devuelve una velocidad aleatoria con la misma magnitud 'speed' y dirección aleatoria.
+    """
+    angle = random.uniform(0, 2 * math.pi)
+    vx = speed * math.cos(angle)
+    vy = speed * math.sin(angle)
+    return [vx, vy]
 
-# Lista de objetos para iterar fácilmente
+def random_position(image):
+    """
+    Devuelve una posición aleatoria [x, y] para la imagen, asegurando que esté completamente dentro de la pantalla.
+    """
+    img_width = image.get_width()
+    img_height = image.get_height()
+    x = random.randint(0, width - img_width)
+    y = random.randint(0, height - img_height)
+    return [x, y]
+
+# Configurar cada objeto con posición y velocidad aleatoria, pero con la misma magnitud de velocidad
+rock = {
+    "name": "rock",
+    "image": rock_img,
+    "pos": random_position(rock_img),
+    "vel": random_velocity_constant(3)
+}
+paper = {
+    "name": "paper",
+    "image": paper_img,
+    "pos": random_position(paper_img),
+    "vel": random_velocity_constant(3)
+}
+scissors = {
+    "name": "scissors",
+    "image": scissors_img,
+    "pos": random_position(scissors_img),
+    "vel": random_velocity_constant(3)
+}
+
 objects = [rock, paper, scissors]
 
 clock = pygame.time.Clock()
@@ -41,10 +76,10 @@ while True:
             pygame.quit()
             sys.exit()
 
-    # Obtener el rectángulo de la pantalla (espacio de colisión) en cada iteración
+    # Obtener el rectángulo de la pantalla (área de colisión)
     screen_rect = screen.get_rect()
     
-    # Actualizar la posición de cada objeto y comprobar colisiones con los bordes usando screen_rect
+    # Actualizar la posición de cada objeto y comprobar rebotes en los bordes
     for obj in objects:
         obj["pos"][0] += obj["vel"][0]
         obj["pos"][1] += obj["vel"][1]
@@ -52,14 +87,12 @@ while True:
         img_width = obj["image"].get_width()
         img_height = obj["image"].get_height()
         
-        # Rebotar en los bordes horizontales
         if obj["pos"][0] < screen_rect.left or obj["pos"][0] + img_width > screen_rect.right:
             obj["vel"][0] = -obj["vel"][0]
-        # Rebotar en los bordes verticales
         if obj["pos"][1] < screen_rect.top or obj["pos"][1] + img_height > screen_rect.bottom:
             obj["vel"][1] = -obj["vel"][1]
     
-    # Detección de colisiones y aplicación de las reglas de piedra, papel o tijeras
+    # Detección de colisiones y aplicación de reglas de piedra, papel o tijeras
     for i in range(len(objects)):
         for j in range(i + 1, len(objects)):
             rect_i = objects[i]["image"].get_rect(topleft=objects[i]["pos"])
@@ -87,7 +120,7 @@ while True:
                     objects[i]["name"] = "paper"
                     objects[i]["image"] = paper_img
 
-    # Dibujar todo en pantalla
+    # Dibujar en pantalla
     screen.fill(BLACK)
     for obj in objects:
         screen.blit(obj["image"], obj["pos"])
