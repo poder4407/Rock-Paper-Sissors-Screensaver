@@ -1,4 +1,3 @@
-#hi
 import pygame
 import sys
 
@@ -8,48 +7,53 @@ pygame.init()
 # Dimensiones de la ventana
 width, height = 800, 600
 screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Dos figuras rebotando")
+pygame.display.set_caption("Tres imágenes rebotando")
 
-# Definir algunos colores
+# Definir color de fondo
 BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
 
-# Propiedades de las figuras (posición, velocidad, radio)
-circle1 = {"pos": [100, 100], "vel": [3, 2], "radius": 30, "color": RED}
-circle2 = {"pos": [200, 200], "vel": [2, 3], "radius": 40, "color": BLUE}
+# Cargar las imágenes desde la carpeta "images"
+rock_img = pygame.image.load("images/rock.png")
+paper_img = pygame.image.load("images/paper.png")
+sissors_img = pygame.image.load("images/sissors.png")
+
+# Configurar cada imagen con su posición inicial y velocidad
+rock = {"image": rock_img, "pos": [100, 100], "vel": [3, 2]}
+paper = {"image": paper_img, "pos": [200, 200], "vel": [2, 3]}
+sissors = {"image": sissors_img, "pos": [300, 300], "vel": [3, 3]}
 
 clock = pygame.time.Clock()
 
-# Bucle principal del juego
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
     
-    # Actualizar la posición de cada círculo
-    for circle in [circle1, circle2]:
-        circle["pos"][0] += circle["vel"][0]
-        circle["pos"][1] += circle["vel"][1]
+    # Actualizar posición de cada imagen y comprobar colisiones con los bordes
+    for obj in (rock, paper, sissors):
+        obj["pos"][0] += obj["vel"][0]
+        obj["pos"][1] += obj["vel"][1]
         
-        # Comprobar colisiones con los bordes horizontales
-        if circle["pos"][0] - circle["radius"] < 0 or circle["pos"][0] + circle["radius"] > width:
-            circle["vel"][0] = -circle["vel"][0]
+        # Obtener dimensiones de la imagen
+        img_width = obj["image"].get_width()
+        img_height = obj["image"].get_height()
         
-        # Comprobar colisiones con los bordes verticales
-        if circle["pos"][1] - circle["radius"] < 0 or circle["pos"][1] + circle["radius"] > height:
-            circle["vel"][1] = -circle["vel"][1]
+        # Rebotar en los bordes horizontales
+        if obj["pos"][0] < 0 or obj["pos"][0] + img_width > width:
+            obj["vel"][0] = -obj["vel"][0]
+        
+        # Rebotar en los bordes verticales
+        if obj["pos"][1] < 0 or obj["pos"][1] + img_height > height:
+            obj["vel"][1] = -obj["vel"][1]
     
-    # Rellenar la pantalla con negro
+    # Rellenar la pantalla de negro
     screen.fill(BLACK)
     
-    # Dibujar los círculos
-    pygame.draw.circle(screen, circle1["color"], (int(circle1["pos"][0]), int(circle1["pos"][1])), circle1["radius"])
-    pygame.draw.circle(screen, circle2["color"], (int(circle2["pos"][0]), int(circle2["pos"][1])), circle2["radius"])
+    # Dibujar cada imagen en su posición actual
+    screen.blit(rock["image"], rock["pos"])
+    screen.blit(paper["image"], paper["pos"])
+    screen.blit(sissors["image"], sissors["pos"])
     
-    # Actualizar la pantalla
     pygame.display.flip()
-    
-    # Controlar los FPS
     clock.tick(60)
