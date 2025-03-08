@@ -9,13 +9,18 @@ width, height = 800, 600
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Tres imágenes rebotando")
 
-# Definir color de fondo
+# Color de fondo
 BLACK = (0, 0, 0)
 
 # Cargar las imágenes desde la carpeta "images"
 rock_img = pygame.image.load("images/rock.png")
 paper_img = pygame.image.load("images/paper.png")
 sissors_img = pygame.image.load("images/sissors.png")
+
+# Escalar las imágenes para que sean más pequeñas (50x50 píxeles)
+rock_img = pygame.transform.scale(rock_img, (50, 50))
+paper_img = pygame.transform.scale(paper_img, (50, 50))
+sissors_img = pygame.transform.scale(sissors_img, (50, 50))
 
 # Configurar cada imagen con su posición inicial y velocidad
 rock = {"image": rock_img, "pos": [100, 100], "vel": [3, 2]}
@@ -24,13 +29,14 @@ sissors = {"image": sissors_img, "pos": [300, 300], "vel": [3, 3]}
 
 clock = pygame.time.Clock()
 
+# Bucle principal del juego
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
     
-    # Actualizar posición de cada imagen y comprobar colisiones con los bordes
+    # Actualizar la posición de cada imagen y comprobar colisiones con los bordes
     for obj in (rock, paper, sissors):
         obj["pos"][0] += obj["vel"][0]
         obj["pos"][1] += obj["vel"][1]
