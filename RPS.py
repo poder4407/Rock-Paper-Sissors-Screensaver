@@ -90,8 +90,8 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        # Permitir salir presionando la tecla ESC
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+        # Ahora, cualquier tecla presionada cierra el programa
+        if event.type == pygame.KEYDOWN:
             pygame.quit()
             sys.exit()
         if event.type == update_event:
@@ -116,7 +116,6 @@ while True:
                     counter_tijera += 1
                 # Reiniciar el juego manteniendo la puntuación
                 objects = reset_game()
-                # Se actualiza el estado ganador para evitar sumas repetidas sin cambios
                 winner_state = winning_type
             # Si no hay ganador, se reinicia el estado para permitir futuros incrementos
             if winning_type is None:
