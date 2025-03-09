@@ -189,5 +189,4 @@ while True:
     screen.blit(text_tijera, pos_text_tijera)
     
     pygame.display.flip()
-    clock.tick(60)
-#safe comment
+    clock.tick(30)#optimize
