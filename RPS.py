@@ -1,5 +1,16 @@
-import pygame
 import sys
+import os
+
+def resource_path(relative_path):
+    """Obtiene la ruta absoluta al recurso, funciona para desarrollo y para PyInstaller."""
+    try:
+        # PyInstaller crea una variable _MEIPASS temporal
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+import pygame
 import random
 import math
 
@@ -17,9 +28,9 @@ pygame.display.set_caption("Protector de Pantalla: Piedra, Papel o Tijeras")
 BLACK = (0, 0, 0)
 
 # Cargar las imágenes desde la carpeta "images"
-rock_img = pygame.image.load("images/rock.png")
-paper_img = pygame.image.load("images/paper.png")
-scissors_img = pygame.image.load("images/sissors.png")  # Verifica el nombre del archivo
+rock_img = pygame.image.load(resource_path("images/rock.png"))
+paper_img = pygame.image.load(resource_path("images/paper.png"))
+scissors_img = pygame.image.load(resource_path("images/sissors.png"))
 
 # Escalar las imágenes a 50x50 píxeles
 rock_img = pygame.transform.scale(rock_img, (50, 50))
