@@ -66,6 +66,20 @@ objects = [rock, paper, scissors]
 
 clock = pygame.time.Clock()
 
+# Configurar fuente y contadores para los textos
+font = pygame.font.SysFont(None, 48)
+margin = 20
+counter_piedra = 0
+counter_papel = 0
+counter_tijera = 0
+
+# Variable para registrar el estado ganador actual; solo se suma cuando cambia
+winner_state = None
+
+# Evento para evaluar el estado cada 1000 ms
+update_event = pygame.USEREVENT + 1
+pygame.time.set_timer(update_event, 1000)
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -75,6 +89,30 @@ while True:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             pygame.quit()
             sys.exit()
+        if event.type == update_event:
+            # Determinar si todas las imágenes tienen el mismo tipo
+            winning_type = None
+            if all(obj["name"] == "rock" for obj in objects):
+                winning_type = "rock"
+            elif all(obj["name"] == "paper" for obj in objects):
+                winning_type = "paper"
+            elif all(obj["name"] == "scissors" for obj in objects):
+                winning_type = "scissors"
+            else:
+                winning_type = None
+
+            # Solo se suma si se detecta un ganador nuevo (cambio en el estado ganador)
+            if winning_type is not None and winning_type != winner_state:
+                if winning_type == "rock":
+                    counter_piedra += 1
+                elif winning_type == "paper":
+                    counter_papel += 1
+                elif winning_type == "scissors":
+                    counter_tijera += 1
+                winner_state = winning_type
+            # Si no se cumple la condición, se reinicia el estado ganador para permitir futuros incrementos
+            if winning_type is None:
+                winner_state = None
 
     # Obtener el rectángulo de la pantalla (área de colisión)
     screen_rect = screen.get_rect()
@@ -120,10 +158,28 @@ while True:
                     objects[i]["name"] = "paper"
                     objects[i]["image"] = paper_img
 
-    # Dibujar en pantalla
+    # Dibujar fondo y objetos en movimiento
     screen.fill(BLACK)
     for obj in objects:
         screen.blit(obj["image"], obj["pos"])
+    
+    # Renderizar textos con palabra y contador
+    text_piedra = font.render("PIEDRA " + str(counter_piedra), True, (255, 255, 255))
+    text_papel = font.render("PAPEL " + str(counter_papel), True, (255, 255, 255))
+    text_tijera = font.render("TIJERA " + str(counter_tijera), True, (255, 255, 255))
+    
+    # Posicionar los textos en esquinas diferentes:
+    # "PIEDRA" en la esquina superior izquierda
+    pos_piedra = (margin, margin)
+    # "PAPEL" en la esquina superior derecha (se calcula la posición x en función del ancho del texto)
+    pos_papel = (width - text_papel.get_width() - margin, margin)
+    # "TIJERA" en la esquina inferior izquierda
+    pos_tijera = (margin, height - text_tijera.get_height() - margin)
+    
+    # Dibujar los textos en pantalla
+    screen.blit(text_piedra, pos_piedra)
+    screen.blit(text_papel, pos_papel)
+    screen.blit(text_tijera, pos_tijera)
     
     pygame.display.flip()
     clock.tick(60)
