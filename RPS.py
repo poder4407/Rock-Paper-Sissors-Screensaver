@@ -9,7 +9,7 @@ pygame.init()
 info = pygame.display.Info()
 width, height = info.current_w, info.current_h
 screen = pygame.display.set_mode((width, height), pygame.FULLSCREEN)
-pygame.display.set_caption("Piedra, Papel o Tijeras (Misma velocidad)")
+pygame.display.set_caption("Piedra, Papel o Tijeras (Reinicio al ganar)")
 
 BLACK = (0, 0, 0)
 
@@ -42,27 +42,32 @@ def random_position(image):
     y = random.randint(0, height - img_height)
     return [x, y]
 
-# Configurar cada objeto con posición y velocidad aleatoria, pero con la misma magnitud de velocidad
-rock = {
-    "name": "rock",
-    "image": rock_img,
-    "pos": random_position(rock_img),
-    "vel": random_velocity_constant(3)
-}
-paper = {
-    "name": "paper",
-    "image": paper_img,
-    "pos": random_position(paper_img),
-    "vel": random_velocity_constant(3)
-}
-scissors = {
-    "name": "scissors",
-    "image": scissors_img,
-    "pos": random_position(scissors_img),
-    "vel": random_velocity_constant(3)
-}
+def reset_game():
+    """
+    Reinicia los objetos a su estado original (tipo, imagen) pero con posición y velocidad aleatoria.
+    """
+    rock_obj = {
+        "name": "rock",
+        "image": rock_img,
+        "pos": random_position(rock_img),
+        "vel": random_velocity_constant(3)
+    }
+    paper_obj = {
+        "name": "paper",
+        "image": paper_img,
+        "pos": random_position(paper_img),
+        "vel": random_velocity_constant(3)
+    }
+    scissors_obj = {
+        "name": "scissors",
+        "image": scissors_img,
+        "pos": random_position(scissors_img),
+        "vel": random_velocity_constant(3)
+    }
+    return [rock_obj, paper_obj, scissors_obj]
 
-objects = [rock, paper, scissors]
+# Inicializar los objetos
+objects = reset_game()
 
 clock = pygame.time.Clock()
 
@@ -73,7 +78,7 @@ counter_piedra = 0
 counter_papel = 0
 counter_tijera = 0
 
-# Variable para registrar el estado ganador actual; solo se suma cuando cambia
+# Variable para registrar el estado ganador actual (para evitar sumar repetidamente)
 winner_state = None
 
 # Evento para evaluar el estado cada 1000 ms
@@ -90,7 +95,7 @@ while True:
             pygame.quit()
             sys.exit()
         if event.type == update_event:
-            # Determinar si todas las imágenes tienen el mismo tipo
+            # Verificar si todas las imágenes tienen el mismo tipo
             winning_type = None
             if all(obj["name"] == "rock" for obj in objects):
                 winning_type = "rock"
@@ -101,7 +106,7 @@ while True:
             else:
                 winning_type = None
 
-            # Solo se suma si se detecta un ganador nuevo (cambio en el estado ganador)
+            # Solo se suma 1 si se detecta un ganador nuevo y, a continuación, se reinicia el juego
             if winning_type is not None and winning_type != winner_state:
                 if winning_type == "rock":
                     counter_piedra += 1
@@ -109,8 +114,11 @@ while True:
                     counter_papel += 1
                 elif winning_type == "scissors":
                     counter_tijera += 1
+                # Reiniciar el juego manteniendo la puntuación
+                objects = reset_game()
+                # Se actualiza el estado ganador para evitar sumas repetidas sin cambios
                 winner_state = winning_type
-            # Si no se cumple la condición, se reinicia el estado ganador para permitir futuros incrementos
+            # Si no hay ganador, se reinicia el estado para permitir futuros incrementos
             if winning_type is None:
                 winner_state = None
 
@@ -170,16 +178,16 @@ while True:
     
     # Posicionar los textos en esquinas diferentes:
     # "PIEDRA" en la esquina superior izquierda
-    pos_piedra = (margin, margin)
-    # "PAPEL" en la esquina superior derecha (se calcula la posición x en función del ancho del texto)
-    pos_papel = (width - text_papel.get_width() - margin, margin)
+    pos_text_piedra = (margin, margin)
+    # "PAPEL" en la esquina superior derecha, se calcula la posición en función del ancho del texto
+    pos_text_papel = (width - text_papel.get_width() - margin, margin)
     # "TIJERA" en la esquina inferior izquierda
-    pos_tijera = (margin, height - text_tijera.get_height() - margin)
+    pos_text_tijera = (margin, height - text_tijera.get_height() - margin)
     
     # Dibujar los textos en pantalla
-    screen.blit(text_piedra, pos_piedra)
-    screen.blit(text_papel, pos_papel)
-    screen.blit(text_tijera, pos_tijera)
+    screen.blit(text_piedra, pos_text_piedra)
+    screen.blit(text_papel, pos_text_papel)
+    screen.blit(text_tijera, pos_text_tijera)
     
     pygame.display.flip()
     clock.tick(60)
