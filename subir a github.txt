@@ -1,0 +1,23 @@
+git add RPS.py
+
+git commit -m "Agrego archivo .py"
+
+git push origin main
+--------------------------------------------------
+…or create a new repository on the command line
+echo "# Rock-Paper-Sissors-Screensaver" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/poder4407/Rock-Paper-Sissors-Screensaver.git
+git push -u origin main
+---------------------------------------------------
+…or create a new repository on the command line
+echo "# Rock-Paper-Sissors-Screensaver" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/poder4407/Rock-Paper-Sissors-Screensaver.git
+git push -u origin main

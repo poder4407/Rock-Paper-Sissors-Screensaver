@@ -30,7 +30,7 @@ BLACK = (0, 0, 0)
 # Cargar las imágenes desde la carpeta "images"
 rock_img = pygame.image.load(resource_path("images/rock.png"))
 paper_img = pygame.image.load(resource_path("images/paper.png"))
-scissors_img = pygame.image.load(resource_path("images/sissors.png"))
+scissors_img = pygame.image.load(resource_path("images/scissors.png"))
 
 # Escalar las imágenes a 50x50 píxeles
 rock_img = pygame.transform.scale(rock_img, (50, 50))
